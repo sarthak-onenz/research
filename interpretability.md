@@ -219,3 +219,32 @@ The alternative is flying blind into an increasingly AI-driven future, hoping th
 ---
 
 *In a follow-up post, I'll share the complete code to run this experiment yourself on DistilGPT-2, from activation collection through circuit discovery. You'll be able to peer inside a language model and see its thoughts unfold. Stay tuned.*
+
+
+
+
+
+# Code Evolution: TinyStories → Optimized GPT-2 Medium
+
+**Model Selection & Architecture**
+- Started with TinyStories-1M (too small, no factual knowledge) → tried DistilGPT-2 (82M, still weak) → settled on **GPT-2 Medium (355M)** - smallest model with reliable factual knowledge that runs on Colab
+- Used **layer 20 (out of 24)** for analysis instead of middle layers - factual recall happens in later layers, not early ones
+- Increased expansion from 4x → **8x (1024 → 8192 features)** - more dimensions allow for more specific, interpretable features
+
+**Sparsity Optimization**
+- Increased L1 penalty from 0.002 → **0.01 (5x higher)** - forces sparser activations for better interpretability (target <20% active vs 52% before)
+- Extended training from 25 → **30 epochs** with larger feature space to allow proper convergence
+
+**Feature Interpretation**
+- **Fixed "Unknown" features bug** - interpret features used in actual circuits instead of random ones (interpret on-demand during circuit analysis)
+- Increased analysis samples from 50 → **100 examples per feature** for more reliable pattern detection
+- Added **confidence scores** (high/medium/low) and show actual token examples for verification
+- Enhanced pattern detection: separate US cities, world cities, US states, countries, person names instead of generic "proper nouns"
+
+**Visualization & UX**
+- **Fixed JSON serialization** - convert numpy int64/float64 to Python native types before saving
+- Replaced Mermaid with **ASCII art graphs** - no external tools needed, renders directly in terminal
+- Clean display: `Ġ` → `·` for readability, show sample tokens, impact symbols (██ high, ▓▓ med, ░░ low)
+
+**Ablation Testing**
+- Test **top 6 features** (vs 5) with clear impact markers showing when predictions actually change [CHANGED!]
